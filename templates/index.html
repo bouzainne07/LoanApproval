@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premier Bank Loan Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #4a5568;
+            font-weight: 400;
+        }
+        .steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 30px;
+            color: #a0aec0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -35px;
+            top: 20px;
+            width: 40px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+        .step.active {
+            color: #3182ce;
+        }
+        .step.completed {
+            color: #38a169;
+        }
+        .step.completed::after {
+            background: #38a169;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid #a0aec0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: white;
+        }
+        .step.active .step-circle {
+            border-color: #3182ce;
+            background: #3182ce;
+            color: white;
+        }
+        .step.completed .step-circle {
+            border-color: #38a169;
+            background: #38a169;
+            color: white;
+        }
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .form-group {
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            background: white;
+        }
+        .form-group i {
+            position: absolute;
+            right: 15px;
+            top: 50px;
+            color: #a0aec0;
+            pointer-events: none;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 10px rgba(49, 130, 206, 0.2);
+        }
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.4rem;
+            border: 2px solid;
+        }
+        .approved {
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border-color: #38a169;
+            color: #22543d;
+        }
+        .rejected {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            .step {
+                margin: 10px 0;
+            }
+            .step:not(:last-child)::after {
+                display: none;
+            }
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title"><i class="fas fa-university"></i> Premier Bank Loan Predictor</h1>
+            <p class="subtitle">Secure and Intelligent Loan Approval Assessment</p>
+        </div>
+
+        <div class="steps">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <span>Personal Information</span>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <span>Financial Profile</span>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <span>Loan Details</span>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <span>Credit Assessment</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form id="loanForm" action="/predict" method="POST">
+                <div class="form-step active" data-step="1">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="person_age"><i class="fas fa-birthday-cake"></i> Age</label>
+                            <input type="number" id="person_age" name="person_age" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="person_gender"><i class="fas fa-venus-mars"></i> Gender</label>
+                            <select id="person_gender" name="person_gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="person_education"><i class="fas fa-graduation-cap"></i> Education Level</label>
+                            <select id="person_education" name="person_education" required>
+                                <option value="">Select Education</option>
+                                <option value="High School">High School</option>
+                                <option value="Bachelor">Bachelor's Degree</option>
+                                <option value="Master">Master's Degree</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="person_home_ownership"><i class="fas fa-home"></i> Home Ownership</label>
+                            <select id="person_home_ownership" name="person_home_ownership" required>
+                                <option value="">Select Ownership</option>
+                                <option value="RENT">Rent</option>
+                                <option value="OWN">Own</option>
+                                <option value="MORTGAGE">Mortgage</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="2">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="person_income"><i class="fas fa-dollar-sign"></i> Annual Income</label>
+                            <input type="number" id="person_income" name="person_income" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="person_emp_exp"><i class="fas fa-briefcase"></i> Years of Employment</label>
+                            <input type="number" id="person_emp_exp" name="person_emp_exp" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loan_percent_income"><i class="fas fa-chart-pie"></i> Loan-to-Income Ratio (%)</label>
+                            <input type="number" step="0.01" id="loan_percent_income" name="loan_percent_income" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="3">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="loan_amnt"><i class="fas fa-money-bill-wave"></i> Requested Loan Amount</label>
+                            <input type="number" id="loan_amnt" name="loan_amnt" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loan_intent"><i class="fas fa-bullseye"></i> Loan Purpose</label>
+                            <select id="loan_intent" name="loan_intent" required>
+                                <option value="">Select Purpose</option>
+                                <option value="PERSONAL">Personal</option>
+                                <option value="EDUCATION">Education</option>
+                                <option value="MEDICAL">Medical</option>
+                                <option value="VENTURE">Business Venture</option>
+                                <option value="HOMEIMPROVEMENT">Home Improvement</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="loan_int_rate"><i class="fas fa-percentage"></i> Interest Rate (%)</label>
+                            <input type="number" step="0.01" id="loan_int_rate" name="loan_int_rate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="4">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cb_person_cred_hist_length"><i class="fas fa-history"></i> Credit History Length (years)</label>
+                            <input type="number" id="cb_person_cred_hist_length" name="cb_person_cred_hist_length" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="credit_score"><i class="fas fa-star"></i> Credit Score</label>
+                            <input type="number" id="credit_score" name="credit_score" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="previous_loan_defaults_on_file"><i class="fas fa-exclamation-triangle"></i> Previous Loan Defaults</label>
+                            <select id="previous_loan_defaults_on_file" name="previous_loan_defaults_on_file" required>
+                                <option value="">Select Option</option>
+                                <option value="No">No Defaults</option>
+                                <option value="Yes">Has Defaults</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn" id="prevBtn" disabled>Previous</button>
+                    <button type="button" class="btn" id="nextBtn">Next</button>
+                </div>
+            </form>
+
+            {% if score %}
+            <div class="result {% if result == 'Approved' %}approved{% else %}rejected{% endif %}">
+                <i class="fas {% if result == 'Approved' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                <strong>{{ result }}</strong><br>
+                <small>Confidence Score: {{ score }}</small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const formSteps = document.querySelectorAll('.form-step');
+        const steps = document.querySelectorAll('.step');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+
+        function updateSteps() {
+            formSteps.forEach(step => step.classList.remove('active'));
+            steps.forEach(step => step.classList.remove('active', 'completed'));
+
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+
+            for (let i = 1; i <= currentStep; i++) {
+                document.querySelector(`.step[data-step="${i}"]`).classList.add('active');
+                if (i < currentStep) {
+                    document.querySelector(`.step[data-step="${i}"]`).classList.add('completed');
+                }
+            }
+
+            prevBtn.disabled = currentStep === 1;
+            nextBtn.textContent = currentStep === totalSteps ? 'Get Prediction' : 'Next';
+            nextBtn.type = currentStep === totalSteps ? 'submit' : 'button';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateSteps();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateSteps();
+            }
+        });
+
+        updateSteps();
+    </script>
+</body>
+</html>
